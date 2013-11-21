@@ -62,8 +62,8 @@ function getRealControl() {
 // })();
 
 var startTime = new Date().getTime();
-var buyingTime = new Date(2013, 10, 19, 15, 0, 0).getTime();
-var interval = 5000;
+var buyingTime = new Date(2013, 10, 26, 12, 0, 0).getTime();
+var interval = 0;
 function buyPhone() {
 
 	var nowTime = new Date().getTime();
@@ -87,5 +87,5 @@ function buyPhone() {
 	}
 
 }
-timer = setInterval(buyPhone, 500);
+timer = setInterval(buyPhone, 1000);
 // Util.showBox("phone");
