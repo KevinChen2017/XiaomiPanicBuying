@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+
+  "name": "Xiaomi Panic buying",
+  "description": "This extension is for xiaomi panic buying.",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "xiaomi.png"
+  },
+   "content_scripts": [
+    {
+      "matches": ["http://p.www.xiaomi.com/open/*", "http://account.xiaomi.com/pass/serviceLogin*"],
+      "css": ["mystyles.css"],
+      "js": ["process.min.js","myscript.js"]
+    }
+  ],		
+  "permissions": [
+    "cookies",
+    "http://www.xiaomi.com/", "https://www.xiaomi.com/","http://www.baidu.com/","http://tc.hd.xiaomi.com/",
+	"notifications",
+	"tabs", "http://www.google.com.sg/*",
+	"activeTab"
+  ],
+   "web_accessible_resources": [
+    "images/loading.gif"
+  ]
+}
