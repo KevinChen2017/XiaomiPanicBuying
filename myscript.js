@@ -1,3 +1,4 @@
+buyingTime = new Date(2013, 10, 26, 12, 0, 0).getTime();
 /**
  * this method is used for mention
  */
@@ -39,8 +40,11 @@ function createOrUpadateElement(str) {
 }
 
 function getRealControl() {
-	// buy phone start at 12:00:05
+	// buy phone start at 12:00:00
 	var timestamp = new Date().getTime();
+	if(timestamp < buyingTime){
+	       timestamp = buyingTime;
+	}
 	// this url is for getting the real selection page
 	var url = "http://tc.hd.xiaomi.com/hdget?callback=hdcontrol&_=" + timestamp;
 	var xhr = new XMLHttpRequest();
@@ -49,43 +53,60 @@ function getRealControl() {
 	console.log(xhr.responseText);
 	return xhr.responseText;
 }
+  /**
+  get time seconds diff between server and local
+  */
+ function getServerLocalDiffTime(){
+     var config = getHdcontrolObject();
+     var diffTime = parseInt(parseInt(buyingTime/1000) - config.stime);
+     return diffTime;
+ }
 
-// (function showLocalServerDiffTime() {
-// // var realControl =
-// "hdcontrol({'stime':1381821869,'status':{'allow':false,'miphone':{'hdstart':false,'hdstop':true,'hdurl':'mitv','duration':null,'pmstart':false},'mibox':{'hdstart':false,'hdstop':true,'hdurl':'','duration':null,'pmstart':false}}})";
-// var realControl = getRealControl();
-// if (realControl) {
-// var config = eval(realControl.substring(9, realControl.length));
-// var diffTime = parseInt(config.stime - parseInt(new Date().getTime()/1000));
-// console.log(diffTime);
-// }
-// })();
-
-var startTime = new Date().getTime();
-var buyingTime = new Date(2013, 10, 26, 12, 0, 0).getTime();
-var interval = 0;
+ function getHdcontrolObject(){
+     var realControl = getRealControl();
+     if (realControl) {
+     var hdObject = eval(realControl.substring(9, realControl.length));
+     if(hdObject){
+         return hdObject;
+     }
+     return null;
+     }
+ }
+/**
+*buy phone logic
+*/
 function buyPhone() {
-
-	var nowTime = new Date().getTime();
-	if (nowTime >= buyingTime) {
-		if (nowTime - startTime >= interval) {
-			createOrUpadateElement("小米助手正在拼命帮您抢购。。。。。。。。。。。");
-			try {
-				console.log("printing every 5 seconds!");
-				eval(getRealControl());
-				// var str =
-				// "hdcontrol({'stime':1381821869,'status':{'allow':false,'miphone':{'hdstart':false,'hdstop':true,'hdurl':'mitv','duration':null,
-				// 'pmstart':false},'mibox':{'hdstart':false,'hdstop':true,'hdurl':'','duration':null,'pmstart':false}}})";
-				// eval(str);
-			} catch (err) {
-				console.log(err.message);
-			}
-			startTime = nowTime;
-		}
-	} else {
-		createOrUpadateElement("不要着急，时间未到，(时间一到小米助手会自动帮您抢购)");
-	}
-
+    console.log("enter buyPhone method");
+    try {
+        var hdObject = getHdcontrolObject();
+        var c = hdObject.status, d = c.miphone.hdurl, b = c.mibox.hdurl, a = c.mitv.hdurl, f = hdObject.d22a51 ?hdObject.d22a51 * 0x3e8
+                    : 0x1388;
+       if (d) {
+            m.locationNext(d)
+       }
+       else{
+            ajaxInter = window.setTimeout(function() {
+                    buyPhone();
+            }, f)
+       }
+    } catch (err) {
+        console.log(err.message);
+    }
+    console.log("out buyPhone method");
 }
-timer = setInterval(buyPhone, 1000);
-// Util.showBox("phone");
+(function start(){
+     var diffTime = getServerLocalDiffTime();
+
+     if (diffTime < 0) {
+    	createOrUpadateElement("小米助手正在拼命帮您抢购。。。。。。。。。。。");
+    	buyPhone();
+     }
+    else {
+        createOrUpadateElement("不要着急，时间未到，(时间一到小米助手会自动帮您抢购)");
+        ajaxInter = window.setTimeout(function() {
+                            buyPhone();
+                    }, diffTime)
+    }
+ })();
+
+
