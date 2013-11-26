@@ -57,8 +57,12 @@ function getRealControl() {
   get time seconds diff between server and local
   */
  function getServerLocalDiffTime(){
+     var startRequest = new Date().getTime();
      var config = getHdcontrolObject();
-     var diffTime = parseInt(parseInt(buyingTime/1000) - config.stime);
+     var endRequest = new Date().getTime();
+     var requestTime =  parseInt((endRequest -startRequest)/1000);
+
+     var diffTime = parseInt(parseInt(buyingTime/1000) - config.stime - requestTime);
      return diffTime;
  }
 
@@ -95,8 +99,11 @@ function buyPhone() {
     console.log("out buyPhone method");
 }
 (function start(){
-     var diffTime = getServerLocalDiffTime();
-
+     var nowTime = new Date().getTime();
+     var diffTime = -1;
+     if( nowTime  < buyingTime) {
+         diffTime = getServerLocalDiffTime();
+     }
      if (diffTime < 0) {
     	createOrUpadateElement("小米助手正在拼命帮您抢购。。。。。。。。。。。");
     	buyPhone();
@@ -105,7 +112,7 @@ function buyPhone() {
         createOrUpadateElement("不要着急，时间未到，(时间一到小米助手会自动帮您抢购)");
         ajaxInter = window.setTimeout(function() {
                             buyPhone();
-                    }, diffTime)
+                    }, diffTime*1000)
     }
  })();
 
