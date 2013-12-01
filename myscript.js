@@ -1,4 +1,14 @@
-buyingTime = new Date(2013, 10, 26, 12, 0, 0).getTime();
+var buyingTime; 
+var serverLocaldiffTime=-1;
+//restore configuration
+var port = chrome.runtime.connect({name: "backWork"});
+port.postMessage({method:"readInitConfig"});
+port.onMessage.addListener(function(msg) {
+ buyingTime = msg.buyingTime;
+ serverLocaldiffTime = msg.diffTime;
+ //the entry of program
+ start();
+});
 /**
  * this method is used for mention
  */
@@ -81,6 +91,7 @@ function getRealControl() {
 */
 function buyPhone() {
     console.log("enter buyPhone method");
+	createOrUpadateElement("小米助手正在拼命帮您抢购。。。。。。。。。。。");
     try {
         var hdObject = getHdcontrolObject();
         var c = hdObject.status, d = c.miphone.hdurl, b = c.mibox.hdurl, a = c.mitv.hdurl, f = hdObject.d22a51 ?hdObject.d22a51 * 0x3e8
@@ -89,23 +100,24 @@ function buyPhone() {
             m.locationNext(d)
        }
        else{
-            ajaxInter = window.setTimeout(function() {
-                    buyPhone();
-            }, f)
+           ajaxInter = window.setTimeout(function() {
+                buyPhone();
+           }, 1000);
+
        }
     } catch (err) {
         console.log(err.message);
     }
     console.log("out buyPhone method");
 }
-(function start(){
+
+function start(){
      var nowTime = new Date().getTime();
      var diffTime = -1;
      if( nowTime  < buyingTime) {
-         diffTime = getServerLocalDiffTime();
+         diffTime = serverLocaldiffTime;
      }
      if (diffTime < 0) {
-    	createOrUpadateElement("小米助手正在拼命帮您抢购。。。。。。。。。。。");
     	buyPhone();
      }
     else {
@@ -114,6 +126,6 @@ function buyPhone() {
                             buyPhone();
                     }, diffTime*1000)
     }
- })();
+}
 
 

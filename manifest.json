@@ -14,10 +14,15 @@
       "css": ["mystyles.css"],
       "js": ["process.min.js","myscript.js"]
     }
-  ],		
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "options_page": "options.html",  
   "permissions": [
     "cookies",
-    "http://www.xiaomi.com/", "https://www.xiaomi.com/","http://www.baidu.com/","http://tc.hd.xiaomi.com/",
+    "http://*/*", "https://*/*",
 	"notifications",
 	"tabs", "http://www.google.com.sg/*",
 	"activeTab"
