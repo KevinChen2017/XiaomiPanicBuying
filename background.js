@@ -1,16 +1,24 @@
+localStorage["year"] = 2013;
+localStorage["month"] = 11;
+localStorage["day"] = 17;
+localStorage["hour"] = 12;
+localStorage["minute"] = 00;
+localStorage["second"] = 00;
 function CookieManager(){ 
 	var tempCookies = [];
+	this.isComplete = false;
+	var _this = this;
 	function getCookies(filter){
 		tempCookies = [];
 		chrome.cookies.getAll({}, function(cookies) {
-			console.log(cookies.length);
 			for (var i in cookies) {
-				console.log(cookies[i].domain);
 				if(cookies[i].domain.indexOf(filter) != -1){
 					tempCookies.push(cookies[i]);
 				}
 			}
+			_this.isComplete = true;
 		})
+		
 		console.log(tempCookies);
 	}
 	
@@ -19,10 +27,12 @@ function CookieManager(){
 					cookie.path;
 	}
 	function removeCookies(){
+		console.log("enter removeCookies method");
 		tempCookies.forEach(function(cookie){
 			var url = getURL(cookie);
 			chrome.cookies.remove({"url": url, "name": cookie.name});
 		});
+		console.log("out removeCookies method");
 	}
 	function restoreCookies(){
 		tempCookies.forEach(function(cookie){
@@ -33,9 +43,15 @@ function CookieManager(){
 			chrome.cookies.set(cookie);
 		});
 	}
+	function checkReady(){
+		while(!this.isComplete){
+			console.log("wait complete");
+		}
+	}
 	this.removeCookies = removeCookies;
 	this.restoreCookies = restoreCookies;
 	this.getCookies = getCookies;
+	this.checkReady = checkReady;
 }
 
 function readConfig(){
@@ -73,8 +89,8 @@ function getHdcontrolObject(){
   *get time seconds diff between server and local
   */
  function getServerLocalDiffTime(){
- var cookieManager = new CookieManager();
-	 cookieManager.getCookies("xiaomi");
+ 
+	 //cookieManager.checkReady();
 	 //remove cookies temporarily
 	 cookieManager.removeCookies();
      var startRequest = new Date().getTime();
@@ -87,12 +103,18 @@ function getHdcontrolObject(){
      var diffTime = parseInt(parseInt(buyingTime/1000) - config.stime - requestTime);
      return diffTime;
  }
-
+var cookieManager = new CookieManager();
 chrome.runtime.onConnect.addListener(function(port) {
   console.assert(port.name == "backWork");
   port.onMessage.addListener(function(msg) {
+	
 	  if(msg.method === "readInitConfig"){
-			port.postMessage({"buyingTime":buyingTime,"diffTime":getServerLocalDiffTime()});
+	 
+		  cookieManager.getCookies("xiaomi");
+		  window.setTimeout(function() {
+							   port.postMessage({"buyingTime":buyingTime,"diffTime":getServerLocalDiffTime()});
+						}, 2*1000);
+				
 	  }
   })
 });

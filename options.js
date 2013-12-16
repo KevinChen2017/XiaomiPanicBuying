@@ -4,12 +4,7 @@ function save_options() {
   var color = select.children[select.selectedIndex].value;
   //localStorage["favorite_color"] = color;
 
-   localStorage["year"] = 2013;
-   localStorage["month"] = 11;
-   localStorage["day"] = 03;
-   localStorage["hour"] = 12;
-   localStorage["minute"] = 00;
-   localStorage["second"] = 00;
+   
   // Update status to let user know options were saved.
   var status = document.getElementById("status");
   status.innerHTML = "Options Saved.";

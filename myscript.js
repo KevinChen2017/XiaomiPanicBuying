@@ -102,7 +102,7 @@ function buyPhone() {
        else{
            ajaxInter = window.setTimeout(function() {
                 buyPhone();
-           }, 1000);
+           }, parseInt(1000 * Math.random()));
 
        }
     } catch (err) {
