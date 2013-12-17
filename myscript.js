@@ -56,7 +56,7 @@ function getRealControl() {
 	       timestamp = buyingTime;
 	}
 	// this url is for getting the real selection page
-	var url = "http://tc.hd.xiaomi.com/hdget?callback=hdcontrol&_=" + timestamp;
+	var url = CONFIG.srcs.hdget + timestamp;
 	var xhr = new XMLHttpRequest();
 	xhr.open("GET", url, false);
 	xhr.send(null);
